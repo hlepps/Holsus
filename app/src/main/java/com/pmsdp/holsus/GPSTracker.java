@@ -6,15 +6,18 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 
 public class GPSTracker implements LocationListener {
     Context context;
+    public IMapController mapController;
     public GPSTracker(Context ctx)
     {
         context = ctx;
@@ -40,8 +43,9 @@ public class GPSTracker implements LocationListener {
     }
 
     @Override
-    public void onLocationChanged(@NonNull Location location)
-    {
+    public void onLocationChanged(@NonNull Location location) {
+        mapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        Log.d("loc", location.toString());
 
     }
 }
