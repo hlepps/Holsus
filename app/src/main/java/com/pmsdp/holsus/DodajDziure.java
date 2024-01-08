@@ -1,5 +1,8 @@
 package com.pmsdp.holsus;
 
+import static android.content.Context.MODE_PRIVATE;
+import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,10 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -31,6 +41,8 @@ public class DodajDziure extends androidx.fragment.app.DialogFragment {
 
     public MapView map;
     public GPSTracker gpsTracker;
+
+    SQLiteDatabase twierdza=null;
 
     // Use this instance of the interface to deliver action events.
     NoticeDialogListener listener;
@@ -71,6 +83,14 @@ public class DodajDziure extends androidx.fragment.app.DialogFragment {
                         Log.d("dodawane", "lat:" + latitude + " lon:" + longitude);
                         //FILIP
                         //tutaj wyślij do bazy danych
+                        try
+                        {
+                            twierdza = MainActivity.twierdza;
+                            twierdza.execSQL("INSERT INTO Persons Values(latitude,longitude)");
+
+                        }
+                        catch(SQLiteException e)
+                        {Log.e(getClass().getSimpleName(), "Nie mozna stworzyc albo otworzyc bazy");}
 
                         HoleManager.addHoleOnMap(map, new GeoPoint(latitude,longitude));
                     }

@@ -15,6 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -37,8 +41,10 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
     GPSTracker gpsTracker;
     OverlayItem navigator;
     MyLocationNewOverlay locationOverlay;
-
     Button button;
+
+    String bazaname="dziury.db";
+    public static SQLiteDatabase twierdza=null;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +73,31 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
             mapController.setCenter(new GeoPoint(l.getLatitude(), l.getLongitude()));
         }
 
+        //SQL
+        try
+        {
+            twierdza = openOrCreateDatabase(bazaname,MODE_PRIVATE,null);
+            twierdza.execSQL("CREATE TABLE IF NOT EXISTS Dziury (szerokosc FLOAT, wysokosc FLOAT)");
+            Cursor kursor = twierdza.rawQuery("SELECT * FROM Dziury",null);
+
+
+                    if (kursor != null && kursor.moveToFirst()) {
+                        int indeksx = kursor.getColumnIndex("szerokosc");
+                        int indeksy = kursor.getColumnIndex("wysokosc");
+                        if (indeksx >= 0 && indeksy >= 0) {
+                            do {
+
+                                float szeroki = kursor.getFloat(indeksx);
+                                float wysoki = kursor.getFloat(indeksy);
+                                HoleManager.addHoleOnMap(map,new GeoPoint(szeroki,wysoki));
+                            }
+                            while (kursor.moveToNext());
+                        }
+                        kursor.close();
+                    } else {}
+        }
+        catch(SQLiteException e)
+        {Log.e(getClass().getSimpleName(), "Nie mozna stworzyc albo otworzyc bazy");}
 
         button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
