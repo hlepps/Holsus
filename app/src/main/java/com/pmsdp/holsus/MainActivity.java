@@ -14,12 +14,14 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.Manifest;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.github.nisrulz.sensey.Sensey;
@@ -53,7 +55,20 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Sensey.getInstance().init(this,Sensey.SAMPLING_PERIOD_FASTEST);
+        int ALL_PERMISSIONS = 101;
+
+        final String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.HIGH_SAMPLING_RATE_SENSORS,
+                Manifest.permission.ACCESS_WIFI_STATE};
+
+        ActivityCompat.requestPermissions(this, permissions, ALL_PERMISSIONS);
+
+
+        Sensey.getInstance().init(this,Sensey.SAMPLING_PERIOD_GAME);
 
         Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
@@ -94,6 +109,7 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
 
                                 float szeroki = kursor.getFloat(indeksx);
                                 float wysoki = kursor.getFloat(indeksy);
+                                Log.d("DZIURA", "sz" + szeroki + " wy" + wysoki);
                                 HoleManager.addHoleOnMap(map,new GeoPoint(szeroki,wysoki));
                             }
                             while (kursor.moveToNext());
@@ -153,7 +169,7 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
             }
         };
 
-        Sensey.getInstance().startShakeDetection(1,1,shakeListener);
+        Sensey.getInstance().startShakeDetection(5,50,shakeListener);
 
     }
 

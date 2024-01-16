@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 
+import java.util.List;
+
 public class GPSTracker implements LocationListener {
     Context context;
     public IMapController mapController;
@@ -33,12 +35,28 @@ public class GPSTracker implements LocationListener {
         if(isGPSEnabled)
         {
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, this);
-            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            return l;
+            //Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            List<String> providers = lm.getProviders(true);
+            Location bestLocation = null;
+            for (String provider : providers) {
+                Location l = lm.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+            Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
+            return bestLocation;
+
         }
         else {
             Toast.makeText(context, "Włącz GPS", Toast.LENGTH_SHORT);
+            Log.e("GPS", "nie dziala lokalizacja jak cos");
         }
+        Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
         return null;
     }
 
