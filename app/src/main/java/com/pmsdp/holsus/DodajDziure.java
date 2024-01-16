@@ -81,8 +81,7 @@ public class DodajDziure extends androidx.fragment.app.DialogFragment {
                         float latitude = Float.parseFloat(latitudeText.getText().toString());
                         float longitude = Float.parseFloat(longitudeText.getText().toString());
                         Log.d("dodawane", "lat:" + latitude + " lon:" + longitude);
-                        //FILIP
-                        //tutaj wyślij do bazy danych
+
                         try
                         {
                             twierdza = MainActivity.twierdza;

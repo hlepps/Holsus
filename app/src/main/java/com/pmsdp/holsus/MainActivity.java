@@ -22,6 +22,9 @@ import android.database.sqlite.SQLiteException;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import com.github.nisrulz.sensey.Sensey;
+import com.github.nisrulz.sensey.ShakeDetector;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Sensey.getInstance().init(this,Sensey.SAMPLING_PERIOD_FASTEST);
 
         Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
@@ -125,6 +130,30 @@ public class MainActivity extends AppCompatActivity  implements DodajDziure.Noti
             }
         });*/
         map.getOverlays().add(locationOverlay);
+
+        ShakeDetector.ShakeListener shakeListener=new ShakeDetector.ShakeListener() {
+            @Override public void onShakeDetected() {
+                Log.d("SHAKE", "szejk");
+
+            }
+
+            @Override public void onShakeStopped() {
+
+                Log.d("SHAKE", "koniec");
+
+                DodajDziure dodajDziure = new DodajDziure();
+                dodajDziure.map = map;
+                dodajDziure.gpsTracker = gpsTracker;
+                Bundle args = new Bundle();
+                Location temp = gpsTracker.getLocation();
+                args.putFloat("latitude", (float) temp.getLatitude());
+                args.putFloat("longitude", (float) temp.getLongitude());
+                dodajDziure.setArguments(args);
+                dodajDziure.show(getSupportFragmentManager(),null);
+            }
+        };
+
+        Sensey.getInstance().startShakeDetection(1,1,shakeListener);
 
     }
 
