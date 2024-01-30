@@ -85,7 +85,7 @@ public class DodajDziure extends androidx.fragment.app.DialogFragment {
                         try
                         {
                             twierdza = MainActivity.twierdza;
-                            twierdza.execSQL("INSERT INTO Persons Values(latitude,longitude)");
+                            twierdza.execSQL("INSERT INTO Dziury Values(" + latitude + "," + longitude +" )");
 
                         }
                         catch(SQLiteException e)
