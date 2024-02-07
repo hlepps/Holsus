@@ -48,7 +48,7 @@ public class GPSTracker implements LocationListener {
                     bestLocation = l;
                 }
             }
-            Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
+            //Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
             return bestLocation;
 
         }
@@ -56,7 +56,7 @@ public class GPSTracker implements LocationListener {
             Toast.makeText(context, "Włącz GPS", Toast.LENGTH_SHORT);
             Log.e("GPS", "nie dziala lokalizacja jak cos");
         }
-        Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
+        //Log.d("GPS", "isGPSEnabled:" + isGPSEnabled);
         return null;
     }
 
@@ -64,6 +64,8 @@ public class GPSTracker implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         mapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         Log.d("loc", location.toString());
+
+
 
     }
 }
